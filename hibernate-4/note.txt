@@ -1,0 +1,49 @@
+1. 使用 Hibernate 二级缓存的步骤:
+
+1). 加入二级缓存插件的 jar 包及配置文件:
+
+I. 复制 \hibernate-release-4.2.4.Final\lib\optional\ehcache\*.jar 到当前 Hibrenate 应用的类路径下.
+II. 复制 hibernate-release-4.2.4.Final\project\etc\ehcachexml 到当前 WEB 应用的类路径下
+
+2). 配置 hibernate.cfg.xml 
+
+I.   配置启用 hibernate 的二级缓存
+<property name="cache.use_second_level_cache">true</property>
+
+II.  配置hibernate二级缓存使用的产品
+<property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+
+III. 配置对哪些类使用 hibernate 的二级缓存
+<class-cache usage="read-write" class="com.atguigu.hibernate.entities.Employee"/>
+		
+实际上也可以在 .hbm.xml 文件中配置对哪些类使用二级缓存, 及二级缓存的策略是什么. 
+
+2). 集合级别的二级缓存的配置
+
+I. 配置对集合使用二级缓存
+
+<collection-cache usage="read-write" collection="com.atguigu.hibernate.entities.Department.emps"/>
+
+也可以在 .hbm.xml 文件中进行配置
+
+<set name="emps" table="GG_EMPLOYEE" inverse="true" lazy="true">
+	<cache usage="read-write"/>
+    <key>
+        <column name="DEPT_ID" />
+    </key>
+    <one-to-many class="com.atguigu.hibernate.entities.Employee" />
+</set>
+
+II. 注意: 还需要配置集合中的元素对应的持久化类也使用二级缓存! 否则将会多出 n 条 SQL 语句. 
+
+3). ehcache 的 配置文件: ehcache.xml
+
+4).  查询缓存: 默认情况下, 设置的缓存对 HQL 及 QBC 查询时无效的, 但可以通过以下方式使其是有效的
+
+I.  在 hibernate 配置文件中声明开启查询缓存
+
+<property name="cache.use_query_cache">true</property>
+
+II. 调用 Query 或 Criteria 的 setCacheable(true) 方法
+
+III. 查询缓存依赖于二级缓存

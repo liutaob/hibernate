@@ -1,0 +1,39 @@
+1. Session:
+
+1). 对 Session 缓存的理解
+
+2). Session 的 API 方法:
+
+save,persist,saveOrUpdate
+update, merge
+get,load -- get 和 load 的区别
+delete
+
+close
+flush
+refresh
+clear
+
+evict
+
+3). Transaction: 
+
+commit() -- commit 和  flush 的区别
+
+4). 在持久化的角度对象的 4 种状态, 以及转换. 
+
+5). session.doWork(): 可以获取到 JDBC 原生的 Connection 对象.
+
+2. hibernate.cfg.xml:
+
+配置 C3P0 数据库连接池
+
+3. .hbm.xml:
+
+1). ID 生成器: increment, identity, sequence, hilo, native
+
+2). property 的  not-null, unique, length, index, formula, type
+
+3). 如何映射 java.util.Date 类型的属性
+
+4). property 的 column 子节点, 其中有一个 sql-type 属性. 

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.atguigu.hibernate.entities">
+
+    <class name="News" table="NEWS" dynamic-update="true">
+    
+        <id name="id" type="java.lang.Integer">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        
+        <property name="title" type="string" column="TITLE"
+        	unique="true" update="false" index="news_index" length="20">
+        </property>
+        
+        <property name="author" type="java.lang.String" index="news_index">
+            <column name="AUTHOR" />
+        </property>
+        
+        <property name="date" type="time">
+            <column name="DATE" />
+        </property>
+        
+        <!-- 映射派生属性 -->
+        <property name="desc" formula="(SELECT concat(author, ': ', title) FROM NEWS n WHERE n.id = id)"></property>
+        
+        <!-- 映射大对象 -->
+        <!-- 若希望精确映射 SQL 类型, 可以使用 sql-type 属性. -->
+        <property name="content">
+        	<column name="CONTENT" sql-type="mediumtext"></column>
+        </property>
+        
+        <property name="image">
+        	<column name="IMAGE" sql-type="mediumblob"></column>
+        </property>
+        
+    </class>
+    
+</hibernate-mapping>
