@@ -47,19 +47,25 @@
     	<property name="jdbc.batch_size">30</property>
     	
     	<!-- 需要关联的 hibernate 映射文件 .hbm.xml -->
+<!--		一对一 基于外键-->
 <!--		<mapping resource="com/atguigu/hibernate/one2one/foreign/Manager.hbm.xml"/>-->
 <!--		<mapping resource="com/atguigu/hibernate/one2one/foreign/Department.hbm.xml"/>-->
+
+		<!--		一对一 基于主键-->
 <!--		<mapping resource="com/atguigu/hibernate/one2one/primary/Manager.hbm.xml"/>-->
 <!--		<mapping resource="com/atguigu/hibernate/one2one/primary/Department.hbm.xml"/>-->
 
-		<mapping resource="com/atguigu/hibernate/n2n/Category.hbm.xml"/>
-		<mapping resource="com/atguigu/hibernate/n2n/Item.hbm.xml"/>
-<!--		<mapping resource="com/atguigu/hibernate/strategy/Customer.hbm.xml"/>-->
-<!--		<mapping resource="com/atguigu/hibernate/strategy/Order.hbm.xml"/>-->
-		
-    	<!--  
-		<mapping resource="com/atguigu/hibernate/union/subclass/Person.hbm.xml"/>
-		-->
-		    
+<!--		多对多-->
+<!--		<mapping resource="com/atguigu/hibernate/n2n/Category.hbm.xml"/>-->
+<!--		<mapping resource="com/atguigu/hibernate/n2n/Item.hbm.xml"/>-->
+
+<!--		三种继承-->
+<!--		<mapping resource="com/atguigu/hibernate/subclass/Person.hbm.xml"/>-->
+<!--				<mapping resource="com/atguigu/hibernate/joined/subclass/Person.hbm.xml"/>-->
+<!--				<mapping resource="com/atguigu/hibernate/union/subclass/Person.hbm.xml"/>-->
+
+<!--		检索策略-->
+		<mapping resource="com/atguigu/hibernate/strategy/Customer.hbm.xml"/>
+		<mapping resource="com/atguigu/hibernate/strategy/Order.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

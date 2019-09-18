@@ -1,7 +1,12 @@
 package com.atguigu.hibernate.union.subclass;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
+import com.mysql.jdbc.JDBC4PreparedStatement;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -39,8 +44,9 @@ public class HibernateTest {
 	
 	@Test
 	public void testUpdate(){
-		String hql = "UPDATE Person p SET p.age = 20";
-		session.createQuery(hql).executeUpdate();
+//		String hql = "UPDATE Person p SET p.age = 20";
+		String hql = "UPDATE Student s SET s.age = ? WHERE id = ?";
+		session.createQuery(hql).setInteger(0,9).setParameter(1,2).executeUpdate();
 	}
 	
 	/**
@@ -60,11 +66,13 @@ public class HibernateTest {
 	 */
 	@Test
 	public void testQuery(){
-		List<Person> persons = session.createQuery("FROM Person").list();
-		System.out.println(persons.size()); 
+		//占位从0开始区别于JPA
+		Person persons = (Person) session.createQuery("FROM Person WHERE ID=?").setParameter(0,1).uniqueResult();
+		System.out.println(persons);
+//		persons.forEach(p-> System.out.println(p.toString()));
 		
-		List<Student> stus = session.createQuery("FROM Student").list();
-		System.out.println(stus.size()); 
+//		List<Student> stus = session.createQuery("FROM Student").list();
+//		System.out.println(stus.size());
 	}
 	
 	/**

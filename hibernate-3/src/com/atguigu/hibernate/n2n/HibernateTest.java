@@ -49,8 +49,8 @@ public class HibernateTest {
 	@Test
 	public void testGet(){
 		Category category = (Category) session.get(Category.class, 1);
-		System.out.println(category.getName()); 
-		
+		System.out.println(category.getName());
+
 		//需要连接中间表
 		Set<Item> items = category.getItems();
 		System.out.println(items.size());
@@ -73,7 +73,7 @@ public class HibernateTest {
 		//设定关联关系
 		category1.getItems().add(item1);
 		category1.getItems().add(item2);
-		
+
 		category2.getItems().add(item1);
 		category2.getItems().add(item2);
 		

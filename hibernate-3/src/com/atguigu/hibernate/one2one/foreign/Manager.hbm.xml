@@ -16,9 +16,10 @@
         <!-- 
         	没有外键的一端需要使用one-to-one元素，该元素使用 property-ref 属性指定使用被关联实体主键以外的字段作为关联字段
          -->
-        <one-to-one name="dept" 
+        <one-to-one name="dept"
         	class="com.atguigu.hibernate.one2one.foreign.Department"
         	property-ref="mgr"></one-to-one>
+
     </class>
     
 </hibernate-mapping>

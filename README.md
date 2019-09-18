@@ -2,6 +2,8 @@
 
 [视频地址](https://www.bilibili.com/video/av51998607?from=search&seid=11960711692608755417)
 
+[github示例代码](https://github.com/liutaob/hibernate)
+
 ORM 
 
 ​	业务	映射				数据库
@@ -61,7 +63,9 @@ ORM
 
 ### 4.Session操作
 
-1）Session 的特定方法能使对象从一个状态转换到另一个状态，站在持久化的角度, Hibernate 把对象分为 **4 种状态**: 
+##### 4.1 对象状态 
+
+Session 的特定方法能使对象从一个状态转换到另一个状态，站在持久化的角度, Hibernate 把对象分为 **4 种状态**: 
 
 * 持久化状态：有主键，建立了上下文环境即在seesion缓存中
 
@@ -73,36 +77,92 @@ ORM
 
   ![转换图](images/1.png)
 
-2）Session缓存：减少数据库频率，flush，commit
+##### 4.2 主键策略
 
-主键策略（generator class="native"自动选择、increment自增、identity 只mysql等、sequence 只oracle等） 主键推荐整数long、short、int，比字符串更节省数据库空间
+（generator class="native"自动选择、increment自增、identity 只mysql等、sequence 只oracle等） 主键推荐整数long、short、int，比字符串更节省数据库空间
 
 ![主键策略](images/2.png)
 
 ![oracle](images/4.png)
 
-事务的级别（对比数据库oracle、mysql、spring、hibernate中显示设置）
+##### 4.3 事务的级别
+
+（对比数据库oracle、mysql、spring、hibernate中显示设置）
 
 1. READ UNCOMMITED
 2. READ COMMITED          解决脏读
 3. REPEATABLE READ        脏读、不可重复读
 4. SERIALIZEABLE              全部
 
-3）persist() 和 save() 区别：当对一个 OID 不为 Null 的对象执行 save() 方法时, 会把该对象以一个新的 oid 保存到数据库中相当于白设置id;  但执行 persist() 方法时会抛出一个异常即必须无id同JPA.（**JPA的persist必须无ID**）
+##### 4.4 基本方法
 
-4）get()和load()区别：数据库不存在load报错，延迟加载策略	get返回null	都是根据OID获取持久化对象 对比JPA的find/findRef
+1）persist() 和 save() 区别：当对一个 OID 不为 Null 的对象执行 save() 方法时, 会把该对象以一个新的 oid 保存到数据库中相当于白设置id;  但执行 persist() 方法时会抛出一个异常即必须无id同JPA.（**JPA的persist必须无ID**）
 
-5）update()：游离对象转持久化，数据库无报错 ；映射class属性  select-before-update修改了才执行sql
+2）get()和load()区别：数据库不存在load报错，延迟加载策略	get返回null	都是根据OID获取持久化对象 对比JPA的find/findRef
+
+3）update()：游离对象转持久化，数据库无报错 ；映射class属性  select-before-update修改了才执行sql
 
 持久化对象无需显示调用，直接get修改即可，最后提交事务会flush；游离对象需要显示调用
 
-6）saveOrUpdate():OID为null则save，非null则update ，id属性 unsaved-value 
+4）saveOrUpdate():OID为null则save，非null则update ，id属性 unsaved-value 
 
-7）merge()方法类比JPA
+5）merge()方法类比JPA
 
 ![merge](images/3.png)
 
-8)delete()即可删除游离，也可持久化对象，类比JPA只能持久化
+6)delete()即可删除游离，也可持久化对象，类比JPA只能持久化
+
+```
+Session缓存：减少数据库频率，flush，commit
+clear(): 清理缓存
+refresh(): 会强制发送 SELECT 语句, 以使 Session 缓存中对象的状态和数据表中对应的记录保持一致!
+```
+
+##### **4.5 高级方法**
+
+1. QBC:  简单查询、分页、分组函数排序等等参考代码
+
+   *createCriteria(XX.class).list()条件查 list uniqueResult单条等
+
+   *//1. 创建一个 Criteria 对象Criteria criteria = session.createCriteria(Employee.class);
+
+   //2. 添加查询条件: 在 QBC 中查询条件使用 Criterion 来表示//Criterion 可以通过 Restrictions 的静态方法得到criteria.add(Restrictions.eq("email", "SKUMAR"));criteria.add(Restrictions.gt("salary", 5000F));
+
+   //3. 执行查询Employee employee = (Employee) criteria.uniqueResult();System.out.println(employee); 
+
+2. HQL:     参考sql和JPA
+
+   *createQuery  session.createQuery("FROM Student").list()
+
+   *设置参数   :属性 或？
+
+   session.createQuery("FROM Person WHERE ID=?").setParameter(0,1).list();
+   session.createQuery("FROM Person WHERE ID=?").setParameter(0,1).uniqueResult();
+
+   *String hql = "UPDATE Person p SET p.age = 20";
+   session.createQuery(hql).executeUpdate();
+
+   *session.getNamedQuery 结合nbm文件中query
+
+   *分页查询setFirstResult、setMaxResults
+
+   *两种字段查询
+
+   *分组、嵌套、多表 
+
+3. SQL:     
+
+   session.createSQLQuery() 本地sql
+
+   ```
+   String sql = "INSERT INTO gg_department VALUES(?, ?)";
+   Query query = session.createSQLQuery(sql);
+   query.setInteger(0, 280)
+        .setString(1, "ATGUIGU")
+        .executeUpdate();
+   ```
+
+
 
 ### 5.调用存储过程、触发器
 
@@ -155,6 +215,8 @@ hibernate.jdbc.batch_size	增删改条数
 ~~~
 
 **对象关系映射文件*.hbm.xml**
+
+可以对应多个类，但推荐一个类一个文件
 
 ~~~
 类层次：class
@@ -293,7 +355,7 @@ woker-pay双向为例 聚合，并非两张表，只有一个wokernbm
         </component>
 ~~~
 
-#### 7.6一对多多对多单双向  
+#### 7.6一对多一对一多对多单双向  
 
  **类比JPA**
 
@@ -503,8 +565,12 @@ public class Order {
 **1--1		部门---经理互相引用 但只指定部门表内建外键**
 
 ```
-部门 many-to-one
-经理one-to-one	property-ref="mgr"
+部门 many-to-one	unique=“true” 属性来表示为1-1关联
+经理one-to-one	property-ref="mgr"可省略
+
+拓展1：若部门改成onetoone无外键生成，部门查经理报错，经理查部门左外
+
+拓展2：两边都是manytoone则两端都外键无法删除
 ```
 
 - 保存操作：先保存没外键的经理 2insert 先保存有外键的部门则有update
@@ -597,9 +663,29 @@ public class Manager {
     </class>
 ~~~
 
-##### 7.6.4一对一双向---基于主键映射
+##### 7.6.4一对一单向---基于外键映射
 
-两边都是onetoone 部门的主键由引用经理的外键生成 	constrained=true
+**1--1		部门引用经理---经理 但只指定部门表内建外键**
+
+~~~
+java参考上
+1）表有外键关系
+   部门manytoone  unique=“true” 属性来表示为1-1关联
+   经理npm中无对应
+- 保存操作同上
+- 查询操作：部门查经理懒加载2条单查   经理查部门单
+
+2）表无外键关系
+部门中onetoone 无ref
+经理npm无对应
+- 保存操作 即单表插入
+- 查询操作：部门查经理左外	经理查部门单
+
+~~~
+
+##### 7.6.5一对一双向---基于主键映射
+
+两边都是onetoone 部门的主键由引用经理的外键生成 	constrained=true  生成的表都是两个字段
 
 * 保存操作：先保存哪边都没有多余的update
 * 查询操作：部门查经理 懒加载（3条查询含左外）  经理查部门左外连接   也可在标签指定
@@ -644,7 +730,9 @@ public class Manager {
 
 ##### 7.6.5多对多单向
 
-商品类目为例，参考一对多的单向和多对多的双向
+商品类目为例，参考一对多的单向和多对多的双向	双向必须指定一端维护关系 单向不需  类比JPA的mappedby
+
+* 操作同下
 
 ##### 7.6.6多对多双向
 
@@ -653,7 +741,7 @@ public class Manager {
 两边都是set标签 manytomany  中间表  	inverse="true"必须指定一端商品维护关系 中间表引用两个外键
 
 * 保存操作：各2条X2 +4条桥表
-* 查询操作：默认懒加载
+* 查询操作：默认懒加载 1单1左外
 
 ~~~java
 //商品
@@ -746,8 +834,312 @@ public class Category {
 
 ~~~
 
+#### 8.映射继承关系
 
+##### 8.1 subclass继承
+
+person student为例
+
+父子类字段在一个表，有辨别列，没有的字段就为空，所以子类字段不能非空约束；
+
+缺点：继承层次深，表字段就多；
+
+~~~
+采用 subclass 的继承映射可以实现对于继承关系中父类和子类使用同一张表
+因为父类和子类的实例全部保存在同一个表中，因此需要在该表内增加一列，使用该列来区分每行记录到低是哪个类的实例----这个列被称为辨别者列(discriminator).
+在这种映射策略下，使用 subclass 来映射子类，使用 class 或 subclass 的 discriminator-value 属性指定辨别者列的值
+所有子类定义的字段都不能有非空约束。如果为那些字段添加非空约束，那么父类的实例在那些列其实并没有值，这将引起数据库完整性冲突，导致父类的实例无法保存到数据库中
+~~~
+
+![生成表](images/11.png)
+
+* 插入操作 辨别列维护
+
+* 查询操作 都是单表session.createQuery("FROM Student").list()  session.createCriteria(Person.class).list();
+
+* ```java
+  //参数占位从0开始
+  session.createQuery("FROM Person WHERE ID=?").setParameter(0,1).list();
+  session.createQuery("FROM Person WHERE ID=?").setParameter(0,1).uniqueResult();
+  ```
+
+~~~java
+//人
+public class Person {
+	private Integer id;
+	private String name;
+	private int age;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+}
+//学生
+public class Student extends Person{
+	private String school;
+	public String getSchool() {
+		return school;
+	}
+	public void setSchool(String school) {
+		this.school = school;
+	}
+}
+~~~
+
+~~~xml
+ <!--父类标签-->
+<class name="Person" table="PERSONS" discriminator-value="PERSON">
+
+        <id name="id" type="java.lang.Integer">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        
+        <!-- 配置辨别者列 -->
+		<discriminator column="TYPE" type="string"></discriminator>
+
+        <property name="name" type="java.lang.String">
+            <column name="NAME" />
+        </property>
+        
+        <property name="age" type="int">
+            <column name="AGE" />
+        </property>
+        
+        <!-- 映射子类 Student, 使用 subclass 进行映射 -->
+        <subclass name="Student" discriminator-value="STUDENT">
+        	<property name="school" type="string" column="SCHOOL"></property>
+        </subclass>
+        
+    </class>
+~~~
+
+##### 8.2 joined-subclass继承
+
+每个子类一张表
+
+子类通过key共享父类主键 即student中主键引用person外键
+
+父类实例保存在父类表中，子类实例由父类表和子类表共同存储。因为子类实例也是一个特殊的父类实例；
+
+```
+优点:
+* 1. 不需要使用了辨别者列.
+* 2. 子类独有的字段能添加非空约束.
+* 3. 没有冗余的字段
+```
+
+~~~
+采用 joined-subclass 元素的继承映射可以实现每个子类一张表
+采用这种映射策略时，父类实例保存在父类表中，子类实例由父类表和子类表共同存储。因为子类实例也是一个特殊的父类实例，因此必然也包含了父类实例的属性。于是将子类和父类共有的属性保存在父类表中，子类增加的属性，则保存在子类表中。
+在这种映射策略下，无须使用鉴别者列，但需要为每个子类使用 key 元素映射共有主键。
+子类增加的属性可以添加非空约束。因为子类的属性和父类的属性没有保存在同一个表中
+~~~
+
+![表](images/12.png)
+
+* 插入操作：参考以上介绍
+* 查询操作： 1. 查询父类记录, 做一个左外连接查询 2. 对于子类记录, 做一个内连接查询. 
+
+java代码同上
+
+person配置
+
+~~~xml
+  <class name="Person" table="PERSONS">
+        <id name="id" type="java.lang.Integer">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="name" type="java.lang.String">
+            <column name="NAME" />
+        </property>
+        <property name="age" type="int">
+            <column name="AGE" />
+        </property>
+        <joined-subclass name="Student" table="STUDENTS">
+        	<key column="STUDENT_id"></key>
+        	<property name="school" type="string" column="SCHOOL"></property>
+        </joined-subclass>
+    </class>
+~~~
+
+##### 8.3 union-subclass继承
+
+三张表 需要采用代理主键
+
+```
+/**
+ * 优点:
+ * 1. 无需使用辨别者列.
+ * 2. 子类独有的字段能添加非空约束.
+ * 
+ * 缺点:
+ * 1. 存在冗余的字段
+ * 2. 若更新父表的字段, 则更新的效率较低
+ */
+```
+
+~~~
+采用 union-subclass 元素可以实现将每一个实体对象映射到一个独立的表中。
+子类增加的属性可以有非空约束 --- 即父类实例的数据保存在父表中，而子类实例的数据保存在子类表中。
+子类实例的数据仅保存在子类表中, 而在父类表中没有任何记录
+在这种映射策略下，子类表的字段会比父类表的映射字段要多,因为子类表的字段等于父类表的字段、加子类增加属性的总和
+在这种映射策略下，既不需要使用鉴别者列，也无须使用 key 元素来映射共有主键.
+使用 union-subclass 映射策略是不可使用 identity 的主键生成策略, 因为同一类继承层次中所有实体类都需要使用同一个主键种子, 即多个持久化实体对应的记录的主键应该是连续的. 受此影响, 也不该使用 native 主键生成策略, 因为 native 会根据数据库来选择使用 identity 或 sequence.
+
+~~~
+
+![表](images/13.png)
+
+* 插入操作：各自的表
+* 查询操作： 1. 查询父类记录, 需把父表和子表记录汇总到一起再做查询. 性能稍差，union连接查询. 2. 对于子类记录, 也只需要查询一张数据表
+* 更新操作 ：修改父类也会改子类
+
+```
+String hql = "UPDATE Person p SET p.age = 20";
+session.createQuery(hql).executeUpdate();
+```
+
+~~~java
+//java同上
+~~~
+
+~~~xml
+ <class name="Person" table="PERSONS">
+        <id name="id" type="java.lang.Integer">
+            <column name="ID" />
+            <generator class="hilo" />
+        </id>
+        <property name="name" type="java.lang.String">
+            <column name="NAME" />
+        </property>
+        <property name="age" type="int">
+            <column name="AGE" />
+        </property>
+		<union-subclass name="Student" table="STUDENTS">
+			<property name="school" column="SCHOOL" type="string"></property>
+		</union-subclass>        
+    </class>
+~~~
+
+##### 8.4 三种对比
+
+![对比](images/14.png)
+
+#### 9.检索策略
+
+##### 9.1 类级别class标签lazy属性
+
+~~~
+1）无论 <class> 元素的 lazy 属性是 true 还是 false, Session 的 get() 方法及 Query 的 list() 方法在类级别总是使用立即检索策略   一调用方法就多条sql查询
+2）若 <class> 元素的 lazy 属性为 true 或取默认值, Session 的 load() 方法不会执行查询数据表的 SELECT 语句, 仅返回代理类对象的实例,			用到才查，flase会立即检索
+该代理类实例有如下特征:
+由 Hibernate 在运行时采用 CGLIB 工具动态生成
+Hibernate 创建代理类实例时, 仅初始化其 OID 属性
+在应用程序第一次访问代理类实例的非 OID 属性时, Hibernate 会初始化代理类实例
+
+~~~
+
+##### 9.2 一对多、多对多set标签lazy属性
+
+true 用到才查
+
+flase立即检索
+
+~~~
+在映射文件中, 用 <set> 元素来配置一对多关联及多对多关联关系. <set> 元素有 lazy 和 fetch 属性
+lazy: 主要决定 orders 集合被初始化的时机. 即到底是在加载 Customer 对象时就被初始化, 还是在程序访问 orders 集合时被初始化
+fetch: 取值为 “select” 或 “subselect” 时, 决定初始化 orders 的查询语句的形式;  若取值为”join”, 则决定 orders 集合被初始化的时机
+若把 fetch 设置为 “join”, lazy 属性将被忽略
+<set> 元素的 batch-size 属性：用来为延迟检索策略或立即检索策略设定批量检索的数量. 批量检索能减少 SELECT 语句的数目, 提高延迟检索或立即检索的运行性能.
+~~~
+
+![策略](images/15.png)
+
+##### 9.3 详细见PPT或github代码
+
+#### 10.检索方式
+
+Hibernate 提供了以下几种检索对象的方式	参考4.4和4.5
+
+* **导航对象图检索方式:**  根据已经加载的对象导航到其他对象
+* **OID 检索方式:**  按照对象的 OID 来检索对象
+* **HQL 检索方式**: 使用面向对象的 HQL 查询语言       类比JPQL、SQL
+* **QBC 检索方式:** 使用 QBC(Query By Criteria) API 来检索对象. 这种 API 封装了基于字符串形式的查询语句, 提供了更加面向对象的查询接口. 
+* **本地 SQL 检索方式**: 使用本地数据库的 SQL 查询语句
+
+#### 11.缓存
+
+默认一级缓存session管理，二级缓存sessionFacotry管理	类比mybatis、jpa缓存
+
+缓存的事务
+
+二级缓存使用方法：配置cfg文件、ecache文件
+
+#### 12.其他扩展
+
+* 批量处理数据是指在一个事务中处理大量数据.在应用层进行批量操作, 主要有以下方式:<br/>
+
+1. 通过 Session 
+2. 通过 HQL 
+3. 通过 StatelessSession
+4.  通过 JDBC API
+
+* query的迭代器
+
+  ~~~
+  Query 接口的 iterator() 方法
+  同 list() 一样也能执行查询操作
+  list() 方法执行的 SQL 语句包含实体类对应的数据表的所有字段
+  Iterator() 方法执行的SQL 语句中仅包含实体类对应的数据表的 ID 字段
+  当遍历访问结果集时, 该方法先到 Session 缓存及二级缓存中查看是否存在特定 OID 的对象, 如果存在, 就直接返回该对象, 如果不存在该对象就通过相应的 SQL Select 语句到数据库中加载特定的实体对象
+  大多数情况下, 应考虑使用 list() 方法执行查询操作. iterator() 方法仅在满足以下条件的场合, 可以稍微提高查询性能:
+  要查询的数据表中包含大量字段
+  启用了二级缓存, 且二级缓存中可能已经包含了待查询的对象
+  ~~~
+
+* 管理session
+
+  ~~~
+  Hibernate  自身提供了三种管理 Session 对象的方法
+  Session 对象的生命周期与本地线程绑定
+  Session 对象的生命周期与 JTA 事务绑定
+  Hibernate 委托程序管理 Session 对象的生命周期
+  在 Hibernate 的配置文件中, hibernate.current_session_context_class 属性用于指定 Session 管理方式, 可选值包括
+  thread: Session 对象的生命周期与本地线程绑定
+  jta*: Session 对象的生命周期与 JTA 事务绑定
+  managed: Hibernate 委托程序来管理 Session 对象的生命周期
+
+  ~~~
+
+  ~~~xml
+  	<!-- 配置管理 Session 的方式 -->
+      <property name="current_session_context_class">thread</property>
+  ~~~
+
+  ​
+
+### 注：
+
+各种详细配置、api的实战、缓存等部分未作详细介绍，详见demo/实战
 
 #TODO
 
-第三个工程、继承关系、检索策略、、HQL、缓存、其他属性、批量操作、对比mybatis和jpa
+本篇未介绍乐观锁
+
+[乐观锁介绍](https://www.cnblogs.com/raphael5200/p/5114750.html)

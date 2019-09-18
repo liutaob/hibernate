@@ -118,14 +118,50 @@ public class HibernateTest {
 		//并不建议设置为  false. 
 		//3. lazy 还可以设置为 extra. 增强的延迟检索. 该取值会尽可能的延迟集合初始化的时机!
 	}
-	
+
+	//测试类级别检索策略
 	@Test
 	public void testClassLevelStrategy(){
 		Customer customer = (Customer) session.load(Customer.class, 1);
 		System.out.println(customer.getClass()); 
 		
-		System.out.println(customer.getCustomerId()); 
-		System.out.println(customer.getCustomerName()); 
+//		System.out.println(customer.getCustomerId());
+//		System.out.println(customer.getCustomerName());
+//		System.out.println(customer.getOrders());
 	}
 
+	@Test
+	public void testMany2OneSave(){
+		Customer customer = new Customer();
+		customer.setCustomerName("AA");
+
+		Order order1 = new Order();
+		order1.setOrderName("ORDER-1");
+
+		Order order2 = new Order();
+		order2.setOrderName("ORDER-2");
+
+		//设定关联关系
+		order1.setCustomer(customer);
+		order2.setCustomer(customer);
+
+		customer.getOrders().add(order1);
+		customer.getOrders().add(order2);
+
+		//执行  save 操作: 先插入 Order, 再插入Customer , 3 条 INSERT, 2 条 UPDATE
+		//因为 1 的一端和 n 的一端都维护关联关系. 所以会多出 UPDATE
+		//可以在 1 的一端的 set 节点指定 inverse=true, 来使 1 的一端放弃维护关联关系!
+		//建议设定 set 的 inverse=true, 建议先插入 1 的一端, 后插入多的一端
+		//好处是不会多出 UPDATE 语句
+		session.save(customer);
+		session.save(order1);
+		session.save(order2);
+
+
+		//先插入 Order, 再插入 Cusomer, 3 条 INSERT, 2 条 UPDATE
+//		session.save(order1);
+//		session.save(order2);
+//
+//		session.save(customer);
+	}
 }

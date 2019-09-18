@@ -51,7 +51,7 @@ public class HibernateTest {
 		//并已经进行初始化. 
 		Manager mgr = (Manager) session.get(Manager.class, 1);
 		System.out.println(mgr.getMgrName()); 
-		System.out.println(mgr.getDept().getDeptName()); 
+		System.out.println(mgr.getDept().getDeptName());
 	}
 	
 	@Test

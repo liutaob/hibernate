@@ -180,7 +180,6 @@ public class HibernateTest {
 	public void testNativeSQL(){
 		String sql = "INSERT INTO gg_department VALUES(?, ?)";
 		Query query = session.createSQLQuery(sql);
-		
 		query.setInteger(0, 280)
 		     .setString(1, "ATGUIGU")
 		     .executeUpdate();

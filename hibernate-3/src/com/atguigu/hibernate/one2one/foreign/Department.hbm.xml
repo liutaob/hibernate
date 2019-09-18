@@ -15,7 +15,7 @@
         </property>
 		
 		<!-- 使用 many-to-one 的方式来映射 1-1 关联关系 -->
-		<many-to-one name="mgr" class="com.atguigu.hibernate.one2one.foreign.Manager" 
+		<many-to-one name="mgr" class="com.atguigu.hibernate.one2one.foreign.Manager"
 			column="MGR_ID" unique="true"></many-to-one>
 			        
     </class>

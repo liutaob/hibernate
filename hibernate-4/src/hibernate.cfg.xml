@@ -50,13 +50,10 @@
     	
     	<!-- 启用二级缓存 -->
 		<property name="cache.use_second_level_cache">true</property>
-    	
     	<!-- 配置使用的二级缓存的产品 -->
     	<property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
-    	
     	<!-- 配置启用查询缓存 -->
     	<property name="cache.use_query_cache">true</property>
-    	
     	<!-- 配置管理 Session 的方式 -->
     	<property name="current_session_context_class">thread</property>
     	

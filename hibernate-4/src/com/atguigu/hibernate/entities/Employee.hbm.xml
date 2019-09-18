@@ -30,7 +30,6 @@
         <many-to-one name="dept" class="com.atguigu.hibernate.entities.Department">
             <column name="DEPT_ID" />
         </many-to-one>
-        
     </class>
     
     <query name="salaryEmps"><![CDATA[FROM Employee e WHERE e.salary > :minSal AND e.salary < :maxSal]]></query>

@@ -20,7 +20,7 @@
         <!-- inverse: 指定由哪一方来维护关联关系. 通常设置为 true, 以指定由多的一端来维护关联关系 -->
         <!-- cascade 设定级联操作. 开发时不建议设定该属性. 建议使用手工的方式来处理 -->
         <!-- order-by 在查询时对集合中的元素进行排序, order-by 中使用的是表的字段名, 而不是持久化类的属性名  -->
-        <set name="orders" table="ORDERS" inverse="true" order-by="ORDER_NAME DESC" cascade="delete" lazy="false">
+        <set name="orders" table="ORDERS" inverse="true" order-by="ORDER_NAME DESC" cascade="delete" lazy="true">
         	<!-- 执行多的表中的外键列的名字 -->
         	<key column="CUSTOMER_ID"></key>
         	<!-- 指定映射类型 -->

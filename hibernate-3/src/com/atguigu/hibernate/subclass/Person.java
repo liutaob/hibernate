@@ -1,7 +1,6 @@
 package com.atguigu.hibernate.subclass;
 
 public class Person {
-	
 	private Integer id;
 	private String name;
 	private int age;
@@ -23,7 +22,4 @@ public class Person {
 	public void setAge(int age) {
 		this.age = age;
 	}
-	
-	
-	
 }

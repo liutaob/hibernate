@@ -118,7 +118,7 @@ public class HibernateTest {
 		customer.getOrders().add(order1);
 		customer.getOrders().add(order2);
 
-		//执行  save 操作: 先插入 Customer, 再插入 Order, 3 条 INSERT, 2 条 UPDATE
+		//执行  save 操作: 先插入Order , 再插入 Customer, 3 条 INSERT, 2 条 UPDATE
 		//因为 1 的一端和 n 的一端都维护关联关系. 所以会多出 UPDATE
 		//可以在 1 的一端的 set 节点指定 inverse=true, 来使 1 的一端放弃维护关联关系!
 		//建议设定 set 的 inverse=true, 建议先插入 1 的一端, 后插入多的一端

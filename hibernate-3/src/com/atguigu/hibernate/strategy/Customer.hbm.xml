@@ -17,7 +17,7 @@
         
         <set name="orders" table="ORDERS" 
         	inverse="true" order-by="ORDER_NAME DESC" lazy="true"
-        	batch-size="2" fetch="subselect">
+        	batch-size="2" fetch="select">
         	<key column="CUSTOMER_ID"></key>
         	<one-to-many class="Order"/>
         </set>

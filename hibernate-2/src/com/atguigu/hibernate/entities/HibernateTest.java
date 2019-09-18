@@ -301,7 +301,7 @@ public class HibernateTest {
 	 */
 	@Test
 	public void testRefresh(){
-		News news = (News) session.get(News.class, 1);
+		News news = (News) session.get(News.class, 6);
 		System.out.println(news);
 		
 //		session.refresh(news);
@@ -330,7 +330,6 @@ public class HibernateTest {
 		
 //		session.flush();
 //		System.out.println("flush");
-		
 		News news2 = (News) session.createCriteria(News.class).uniqueResult();
 		System.out.println(news2);
 	}

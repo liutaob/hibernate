@@ -51,11 +51,13 @@ public class HibernateTest {
 	 */
 	@Test
 	public void testQuery(){
-		List<Person> persons = session.createQuery("FROM Person").list();
-		System.out.println(persons.size()); 
+//		List<Person> persons = session.createQuery("FROM Person").list();
+//		System.out.println(persons.size());
+//		persons.forEach(p-> System.out.println(p));
 		
 		List<Student> stus = session.createQuery("FROM Student").list();
-		System.out.println(stus.size()); 
+		System.out.println(stus.size());
+		stus.forEach(s-> System.out.println(s.getName()));
 	}
 	
 	/**

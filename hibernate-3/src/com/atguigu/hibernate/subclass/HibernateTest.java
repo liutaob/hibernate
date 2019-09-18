@@ -61,11 +61,14 @@ public class HibernateTest {
 	 */
 	@Test
 	public void testQuery(){
-		List<Person> persons = session.createQuery("FROM Person").list();
-		System.out.println(persons.size()); 
-		
-		List<Student> stus = session.createQuery("FROM Student").list();
-		System.out.println(stus.size()); 
+//		List<Person> persons = session.createQuery("FROM Person").list();
+//		System.out.println(persons.size());
+//		List<Student> stus = session.createQuery("FROM Student").list();
+//		System.out.println(stus.size());
+//		List<Person> list = session.createCriteria(Person.class).list();
+//		System.out.println(list.size());
+		Object o = session.createCriteria(Student.class).uniqueResult();
+		System.out.println(o.getClass().getName());
 	}
 	
 	/**

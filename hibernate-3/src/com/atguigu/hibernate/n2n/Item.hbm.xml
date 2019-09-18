@@ -15,7 +15,7 @@
             <column name="NAME" />
         </property>
         
-        <set name="categories" table="CATEGORIES_ITEMS" inverse="true">
+        <set name="categories" table="CATEGORIES_ITEMS">
         	<key column="I_ID"></key>
         	<many-to-many class="com.atguigu.hibernate.n2n.Category" column="C_ID"></many-to-many>
         </set>
